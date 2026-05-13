@@ -24,7 +24,6 @@ const CanvasBoard = forwardRef<CanvasBoardHandle>(function CanvasBoard(_, ref) {
   const visibleWidth = useAppStore((s) => s.visibleWidth);
   const displayMode = useAppStore((s) => s.displayMode);
   const zoom = useAppStore((s) => s.zoom);
-  const canvasResetKey = useAppStore((s) => s.canvasResetKey);
 
   // The offscreen canvas is 2*visibleWidth+1 square to have plenty of room
   const offSize = visibleWidth * 2 + 1;
@@ -158,7 +157,7 @@ const CanvasBoard = forwardRef<CanvasBoardHandle>(function CanvasBoard(_, ref) {
   useEffect(() => {
     initOffscreen();
     blit();
-  }, [initOffscreen, blit, canvasResetKey]);
+  }, [initOffscreen, blit]);
 
   // RAF loop
   useEffect(() => {

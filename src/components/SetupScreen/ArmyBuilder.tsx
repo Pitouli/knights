@@ -18,6 +18,8 @@ import { CSS } from '@dnd-kit/utilities';
 import { useAppStore } from '../../store';
 import { PIECE_CATALOG } from '../../engine/catalog';
 import type { PieceInstance } from '../../types';
+import { PIECE_COLORS } from '../../constants/palette';
+import MoveGrid from './MoveGrid';
 
 // ─── Sortable item ──────────────────────────────────────────
 
@@ -56,12 +58,7 @@ function SortablePiece({ piece, index }: { piece: PieceInstance; index: number }
       <span className="text-xs text-slate-500 w-5 text-center shrink-0">{index + 1}</span>
 
       {/* Symbol */}
-      <span
-        className="w-8 h-8 rounded flex items-center justify-center text-lg font-bold shrink-0"
-        style={{ background: `${piece.color}33`, color: piece.color }}
-      >
-        {pt.symbol}
-      </span>
+      <MoveGrid piece={pt} accent={piece.color} />
 
       {/* Name + type select */}
       <div className="flex-1 min-w-0">
@@ -72,24 +69,27 @@ function SortablePiece({ piece, index }: { piece: PieceInstance; index: number }
             focus:ring-1 focus:ring-indigo-500 border border-slate-600"
         >
           {PIECE_CATALOG.map((pt) => (
-            <option key={pt.id} value={pt.id}>
-              {pt.symbol} {pt.name}
-            </option>
+            <option key={pt.id} value={pt.id}>{pt.name}</option>
           ))}
         </select>
       </div>
 
-      {/* Color picker */}
-      <label className="relative cursor-pointer shrink-0" title="Color">
-        <span
-          className="w-7 h-7 rounded-full border-2 border-slate-600 block"
-          style={{ background: piece.color }}
-        />
-        <input
-          type="color"
+      {/* Palette color select (finite set to allow shared-color alliances) */}
+      <label className="shrink-0" title="Color">
+        <select
           value={piece.color}
           onChange={(e) => updatePiece(piece.id, { color: e.target.value })}
-          className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
+          className="bg-slate-700 text-slate-200 text-xs rounded px-2 py-1 w-20 focus:outline-none
+            focus:ring-1 focus:ring-indigo-500 border border-slate-600"
+        >
+          {PIECE_COLORS.map((color, idx) => (
+            <option key={color} value={color}>{`C${idx + 1}`}</option>
+          ))}
+        </select>
+        <span
+          className="mt-1 w-full h-2 rounded block border border-slate-600"
+          style={{ background: piece.color }}
+          aria-hidden="true"
         />
       </label>
 
@@ -129,6 +129,9 @@ export default function ArmyBuilder() {
       <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">
         Army ({army.length} piece{army.length !== 1 ? 's' : ''})
       </h2>
+      <p className="text-xs text-slate-500 mb-3">
+        Pieces with the same color are allies and can share reachable squares.
+      </p>
 
       {army.length === 0 ? (
         <p className="text-slate-500 text-sm py-8 text-center border border-dashed border-slate-700 rounded-lg">

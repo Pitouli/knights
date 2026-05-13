@@ -1,17 +1,8 @@
 import { PIECE_CATALOG } from '../../engine/catalog';
 import { useAppStore } from '../../store';
 import { nanoid } from '../../utils';
-
-const COLORS = [
-  '#6366f1',
-  '#ec4899',
-  '#22c55e',
-  '#f59e0b',
-  '#38bdf8',
-  '#f97316',
-  '#a78bfa',
-  '#fb7185',
-];
+import { PIECE_COLORS } from '../../constants/palette';
+import MoveGrid from './MoveGrid';
 
 export default function PieceLibrary() {
   const addPiece = useAppStore((s) => s.addPiece);
@@ -31,21 +22,13 @@ export default function PieceLibrary() {
                 addPiece({
                   id: nanoid(),
                   typeId: pt.id,
-                  color: COLORS[army.length % COLORS.length],
+                  color: PIECE_COLORS[army.length % PIECE_COLORS.length],
                 })
               }
               className="w-full flex items-center gap-3 px-3 py-2 rounded-lg
                 bg-slate-800 hover:bg-slate-700 transition-colors text-left group"
             >
-              <span
-                className="w-8 h-8 rounded flex items-center justify-center text-lg font-bold shrink-0"
-                style={{
-                  background: `${COLORS[i % COLORS.length]}33`,
-                  color: COLORS[i % COLORS.length],
-                }}
-              >
-                {pt.symbol}
-              </span>
+              <MoveGrid piece={pt} accent={PIECE_COLORS[i % PIECE_COLORS.length]} />
               <div className="min-w-0">
                 <div className="font-medium text-sm text-slate-200">{pt.name}</div>
                 <div className="text-xs text-slate-500 truncate">
