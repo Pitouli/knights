@@ -4,9 +4,9 @@
  *
  *   n=0 → (0, 0)
  *   n=1 → (1, 0)
- *   n=2 → (1, 1)
- *   n=3 → (0, 1)
- *   n=4 → (-1, 1)
+ *   n=2 → (1, -1)
+ *   n=3 → (0, -1)
+ *   n=4 → (-1, -1)
  *   …
  */
 export class SpiralGen {
@@ -26,9 +26,10 @@ export class SpiralGen {
       this.sc++;
       if (this.sc === this.steps) {
         this.sc = 0;
-        // Turn left (CCW): [dx, dy] → [-dy, dx]
-        const ndx = -this.dy;
-        this.dy = this.dx;
+        // Turn right in Cartesian space so screen-space progression is
+        // right → up → left → down.
+        const ndx = this.dy;
+        this.dy = -this.dx;
         this.dx = ndx;
         this.turns++;
         if (this.turns % 2 === 0) this.steps++;

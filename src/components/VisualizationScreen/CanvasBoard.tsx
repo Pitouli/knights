@@ -25,6 +25,14 @@ const CanvasBoard = forwardRef<CanvasBoardHandle>(function CanvasBoard(_, ref) {
   const displayMode = useAppStore((s) => s.displayMode);
   const zoom = useAppStore((s) => s.zoom);
 
+  const panXRef = useRef(0);
+  const panYRef = useRef(0);
+  const dragRef = useRef<{ active: boolean; x: number; y: number }>({
+    active: false,
+    x: 0,
+    y: 0,
+  });
+
   // The offscreen canvas is 2*visibleWidth+1 square to have plenty of room
   const offSize = visibleWidth * 2 + 1;
   // The logical origin on the offscreen canvas
@@ -83,8 +91,11 @@ const CanvasBoard = forwardRef<CanvasBoardHandle>(function CanvasBoard(_, ref) {
       // Draw centered region of the offscreen at zoom
       const halfW = Math.floor(visible.width / 2 / zoom);
       const halfH = Math.floor(visible.height / 2 / zoom);
-      const sx = originX - halfW;
-      const sy = originY - halfH;
+      const maxPan = visibleWidth;
+      const panX = Math.max(-maxPan, Math.min(maxPan, panXRef.current));
+      const panY = Math.max(-maxPan, Math.min(maxPan, panYRef.current));
+      const sx = originX + panX - halfW;
+      const sy = originY + panY - halfH;
       const sw = visible.width / zoom;
       const sh = visible.height / zoom;
       ctx.imageSmoothingEnabled = false;
@@ -110,7 +121,7 @@ const CanvasBoard = forwardRef<CanvasBoardHandle>(function CanvasBoard(_, ref) {
         ctx.drawImage(off, 0, 0, offSize, offSize, destX, destY, size, size);
       }
     }
-  }, [displayMode, zoom, offSize, originX, originY]);
+  }, [displayMode, zoom, offSize, originX, originY, visibleWidth]);
 
   useImperativeHandle(
     ref,
@@ -153,11 +164,65 @@ const CanvasBoard = forwardRef<CanvasBoardHandle>(function CanvasBoard(_, ref) {
     return () => window.removeEventListener('resize', handleResize);
   }, [resizeVisible, initOffscreen, blit]);
 
-  // Re-init when board geometry changes or when a reset is requested
+  // Re-init when board geometry changes
   useEffect(() => {
+    panXRef.current = 0;
+    panYRef.current = 0;
     initOffscreen();
     blit();
   }, [initOffscreen, blit]);
+
+  // Drag-to-pan in 1:1 mode
+  useEffect(() => {
+    const canvas = visibleCanvasRef.current;
+    if (!canvas || displayMode !== '1:1') return;
+
+    const onPointerDown = (e: PointerEvent) => {
+      dragRef.current = { active: true, x: e.clientX, y: e.clientY };
+      canvas.setPointerCapture(e.pointerId);
+      canvas.style.cursor = 'grabbing';
+    };
+
+    const onPointerMove = (e: PointerEvent) => {
+      if (!dragRef.current.active) return;
+      const dx = e.clientX - dragRef.current.x;
+      const dy = e.clientY - dragRef.current.y;
+      dragRef.current.x = e.clientX;
+      dragRef.current.y = e.clientY;
+
+      panXRef.current -= dx / zoom;
+      panYRef.current -= dy / zoom;
+      blit();
+    };
+
+    const stopDrag = (pointerId?: number) => {
+      if (dragRef.current.active) {
+        dragRef.current.active = false;
+        if (typeof pointerId === 'number' && canvas.hasPointerCapture(pointerId)) {
+          canvas.releasePointerCapture(pointerId);
+        }
+      }
+      canvas.style.cursor = 'grab';
+    };
+
+    const onPointerUp = (e: PointerEvent) => stopDrag(e.pointerId);
+    const onPointerCancel = (e: PointerEvent) => stopDrag(e.pointerId);
+
+    canvas.style.cursor = 'grab';
+    canvas.addEventListener('pointerdown', onPointerDown);
+    canvas.addEventListener('pointermove', onPointerMove);
+    canvas.addEventListener('pointerup', onPointerUp);
+    canvas.addEventListener('pointercancel', onPointerCancel);
+
+    return () => {
+      stopDrag();
+      canvas.style.cursor = 'default';
+      canvas.removeEventListener('pointerdown', onPointerDown);
+      canvas.removeEventListener('pointermove', onPointerMove);
+      canvas.removeEventListener('pointerup', onPointerUp);
+      canvas.removeEventListener('pointercancel', onPointerCancel);
+    };
+  }, [displayMode, zoom, blit]);
 
   // RAF loop
   useEffect(() => {

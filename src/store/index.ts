@@ -61,13 +61,13 @@ export const useAppStore = create<AppState>((set) => ({
 
   isRunning: false,
   setIsRunning: (isRunning) => set({ isRunning }),
-  speed: 50,
+  speed: 1000,
   setSpeed: (speed) => set({ speed }),
 
   totalPlaced: 0,
   turnIndex: 0,
 
-  visibleWidth: 200,
+  visibleWidth: 50,
   setVisibleWidth: (visibleWidth) => set({ visibleWidth }),
   displayMode: 'fit',
   setDisplayMode: (displayMode) => set({ displayMode }),

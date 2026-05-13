@@ -9,12 +9,9 @@ interface Props {
 }
 
 const SPEEDS = [
-  { label: '×1', value: 1 },
-  { label: '×10', value: 10 },
-  { label: '×50', value: 50 },
-  { label: '×200', value: 200 },
-  { label: '×1000', value: 1000 },
-  { label: 'FASTEST', value: 10000 },
+  { label: '1/s', value: 1 },
+  { label: '1000/s', value: 1000 },
+  { label: 'fastest', value: 10000 },
 ];
 
 export default function ControlsPanel({ onStart, onPause, onStep, onReset, onDownloadPng }: Props) {
@@ -74,7 +71,7 @@ export default function ControlsPanel({ onStart, onPause, onStep, onReset, onDow
           htmlFor="speed-controls"
           className="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-2"
         >
-          Speed (pieces/tick)
+          Speed (pieces/second)
         </label>
         <div id="speed-controls" className="flex flex-wrap gap-1">
           {SPEEDS.map((s) => (
@@ -154,6 +151,7 @@ export default function ControlsPanel({ onStart, onPause, onStep, onReset, onDow
             onChange={(e) => setZoom(Number(e.target.value))}
             className="w-full accent-indigo-500"
           />
+          <p className="text-[11px] text-slate-500 mt-2">Drag on the canvas to pan.</p>
         </section>
       )}
 

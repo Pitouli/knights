@@ -14,14 +14,10 @@ import StatsPanel from './StatsPanel';
 
 export default function VisualizationScreen() {
   const setScreen = useAppStore((s) => s.setScreen);
-  const started = useRef(false);
   const canvasRef = useRef<CanvasBoardHandle>(null);
 
   useEffect(() => {
-    if (!started.current) {
-      started.current = true;
-      initAndStart();
-    }
+    initAndStart();
     return () => {
       pauseSimulation();
     };
@@ -36,7 +32,6 @@ export default function VisualizationScreen() {
           onClick={() => {
             resetSimulation();
             canvasRef.current?.resetCanvas();
-            started.current = false;
             setScreen('setup');
           }}
           className="text-slate-400 hover:text-slate-200 transition-colors text-sm flex items-center gap-1"
