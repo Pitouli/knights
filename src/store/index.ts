@@ -33,6 +33,8 @@ interface AppState {
   setDisplayMode: (m: DisplayMode) => void;
   zoom: number;
   setZoom: (v: number) => void;
+  canvasResetKey: number;
+  bumpCanvasResetKey: () => void;
 
   // Show attacks overlay
   showAttacks: boolean;
@@ -71,6 +73,8 @@ export const useAppStore = create<AppState>((set) => ({
   setDisplayMode: (displayMode) => set({ displayMode }),
   zoom: 4,
   setZoom: (zoom) => set({ zoom }),
+  canvasResetKey: 0,
+  bumpCanvasResetKey: () => set((s) => ({ canvasResetKey: s.canvasResetKey + 1 })),
 
   showAttacks: false,
   setShowAttacks: (showAttacks) => set({ showAttacks }),

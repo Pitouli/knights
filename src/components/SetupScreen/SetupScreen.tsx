@@ -38,12 +38,10 @@ export default function SetupScreen() {
                 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed
                 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-400"
             >
-              ▶ Lancer la simulation
+              ▶ Start simulation
             </button>
             {!canStart && (
-              <p className="mt-2 text-xs text-slate-500">
-                Ajoutez au moins une pièce pour commencer.
-              </p>
+              <p className="mt-2 text-xs text-slate-500">Add at least one piece to begin.</p>
             )}
           </div>
         </section>

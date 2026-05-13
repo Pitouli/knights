@@ -8,12 +8,14 @@ import {
   resetSimulation,
 } from '../../engine/simulation';
 import CanvasBoard from './CanvasBoard';
+import type { CanvasBoardHandle } from './CanvasBoard';
 import ControlsPanel from './ControlsPanel';
 import StatsPanel from './StatsPanel';
 
 export default function VisualizationScreen() {
   const setScreen = useAppStore((s) => s.setScreen);
   const started = useRef(false);
+  const canvasRef = useRef<CanvasBoardHandle>(null);
 
   useEffect(() => {
     if (!started.current) {
@@ -33,12 +35,13 @@ export default function VisualizationScreen() {
           type="button"
           onClick={() => {
             resetSimulation();
+            canvasRef.current?.resetCanvas();
             started.current = false;
             setScreen('setup');
           }}
           className="text-slate-400 hover:text-slate-200 transition-colors text-sm flex items-center gap-1"
         >
-          ← Retour
+          ← Back
         </button>
         <span className="text-slate-700">|</span>
         <span className="text-xl">♞</span>
@@ -52,7 +55,7 @@ export default function VisualizationScreen() {
       <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
         {/* Canvas area */}
         <div className="flex-1 flex items-center justify-center overflow-hidden bg-[#080a10] p-2">
-          <CanvasBoard />
+          <CanvasBoard ref={canvasRef} />
         </div>
 
         {/* Controls sidebar */}
@@ -63,9 +66,9 @@ export default function VisualizationScreen() {
             onStep={stepOnce}
             onReset={() => {
               resetSimulation();
-              started.current = true;
-              initAndStart();
+              canvasRef.current?.resetCanvas();
             }}
+            onDownloadPng={() => canvasRef.current?.downloadPng()}
           />
         </aside>
       </div>

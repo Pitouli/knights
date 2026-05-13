@@ -5,6 +5,7 @@ interface Props {
   onPause: () => void;
   onStep: () => void;
   onReset: () => void;
+  onDownloadPng: () => void;
 }
 
 const SPEEDS = [
@@ -13,9 +14,10 @@ const SPEEDS = [
   { label: '×50', value: 50 },
   { label: '×200', value: 200 },
   { label: '×1000', value: 1000 },
+  { label: 'FASTEST', value: 10000 },
 ];
 
-export default function ControlsPanel({ onStart, onPause, onStep, onReset }: Props) {
+export default function ControlsPanel({ onStart, onPause, onStep, onReset, onDownloadPng }: Props) {
   const {
     isRunning,
     speed,
@@ -72,7 +74,7 @@ export default function ControlsPanel({ onStart, onPause, onStep, onReset }: Pro
           htmlFor="speed-controls"
           className="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-2"
         >
-          Vitesse (pièces/tick)
+          Speed (pieces/tick)
         </label>
         <div id="speed-controls" className="flex flex-wrap gap-1">
           {SPEEDS.map((s) => (
@@ -95,7 +97,7 @@ export default function ControlsPanel({ onStart, onPause, onStep, onReset }: Pro
           htmlFor="board-range"
           className="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-2"
         >
-          Rayon du plateau: <span className="text-slate-200 font-bold">{visibleWidth}</span>
+          Board radius: <span className="text-slate-200 font-bold">{visibleWidth}</span>
         </label>
         <input
           id="board-range"
@@ -116,7 +118,7 @@ export default function ControlsPanel({ onStart, onPause, onStep, onReset }: Pro
       {/* Display mode */}
       <fieldset>
         <legend className="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-2">
-          Mode d'affichage
+          Display mode
         </legend>
         <div className="flex gap-2">
           {(['fit', '1:1'] as const).map((m) => (
@@ -154,6 +156,16 @@ export default function ControlsPanel({ onStart, onPause, onStep, onReset }: Pro
           />
         </section>
       )}
+
+      <section>
+        <button
+          type="button"
+          onClick={onDownloadPng}
+          className="w-full py-2 rounded-lg text-sm bg-slate-700 hover:bg-slate-600 transition-colors"
+        >
+          Download canvas (PNG)
+        </button>
+      </section>
     </div>
   );
 }

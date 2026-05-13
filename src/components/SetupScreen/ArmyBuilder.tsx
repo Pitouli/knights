@@ -47,7 +47,7 @@ function SortablePiece({ piece, index }: { piece: PieceInstance; index: number }
         {...attributes}
         {...listeners}
         className="text-slate-500 hover:text-slate-300 cursor-grab active:cursor-grabbing px-1 touch-none"
-        aria-label="Réordonner"
+        aria-label="Reorder"
       >
         ⠿
       </button>
@@ -80,7 +80,7 @@ function SortablePiece({ piece, index }: { piece: PieceInstance; index: number }
       </div>
 
       {/* Color picker */}
-      <label className="relative cursor-pointer shrink-0" title="Couleur">
+      <label className="relative cursor-pointer shrink-0" title="Color">
         <span
           className="w-7 h-7 rounded-full border-2 border-slate-600 block"
           style={{ background: piece.color }}
@@ -98,7 +98,7 @@ function SortablePiece({ piece, index }: { piece: PieceInstance; index: number }
         type="button"
         onClick={() => removePiece(piece.id)}
         className="text-slate-500 hover:text-red-400 transition-colors shrink-0 px-1"
-        aria-label="Supprimer"
+        aria-label="Remove"
       >
         ✕
       </button>
@@ -127,12 +127,12 @@ export default function ArmyBuilder() {
   return (
     <div>
       <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">
-        Armée ({army.length} pièce{army.length !== 1 ? 's' : ''})
+        Army ({army.length} piece{army.length !== 1 ? 's' : ''})
       </h2>
 
       {army.length === 0 ? (
         <p className="text-slate-500 text-sm py-8 text-center border border-dashed border-slate-700 rounded-lg">
-          Cliquez sur une pièce dans le catalogue pour l'ajouter
+          Click a piece in the library to add it
         </p>
       ) : (
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>

@@ -40,7 +40,7 @@ function placeAt(x: number, y: number, piece: WorkerArmy[number]): void {
 
 // ─── Core step ───────────────────────────────────────────────
 
-function step(): { x: number; y: number; color: string } | null {
+function step(boardLimit: number): { x: number; y: number; color: string } | null {
   if (army.length === 0) return null;
   const armyIdx = turnIndex % army.length;
   const piece = army[armyIdx];
@@ -48,6 +48,11 @@ function step(): { x: number; y: number; color: string } | null {
 
   while (i < 10_000_000) {
     const [x, y] = gen.get(i);
+    // Spiral points are monotonic by radius; once outside board bounds,
+    // all subsequent points will stay outside the finite board.
+    if (Math.abs(x) > boardLimit || Math.abs(y) > boardLimit) {
+      return null;
+    }
     const key = `${x},${y}`;
     if (!occupied.has(key) && !isAttackedByEnemy(key, piece.color)) {
       placeAt(x, y, piece);
@@ -87,17 +92,36 @@ self.onmessage = (e: MessageEvent<WorkerMessage>) => {
   if (msg.type === 'RUN') {
     const count = msg.payload.count;
     const cells: { x: number; y: number; color: string }[] = [];
+    let halted = false;
     for (let i = 0; i < count; i++) {
-      const r = step();
-      if (r) cells.push(r);
+      const r = step(msg.payload.boardLimit);
+      if (!r) {
+        halted = true;
+        break;
+      }
+      cells.push(r);
     }
     self.postMessage({ type: 'BATCH', cells, turnIndex } satisfies WorkerResponse);
+    if (halted) {
+      self.postMessage({
+        type: 'HALTED',
+        reason: 'BOARD_LIMIT_REACHED',
+        turnIndex,
+      } satisfies WorkerResponse);
+    }
     return;
   }
 
   if (msg.type === 'STEP') {
-    const r = step();
+    const r = step(msg.payload.boardLimit);
     self.postMessage({ type: 'BATCH', cells: r ? [r] : [], turnIndex } satisfies WorkerResponse);
+    if (!r) {
+      self.postMessage({
+        type: 'HALTED',
+        reason: 'BOARD_LIMIT_REACHED',
+        turnIndex,
+      } satisfies WorkerResponse);
+    }
     return;
   }
 

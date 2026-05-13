@@ -27,13 +27,14 @@ export type WorkerArmy = Array<{ color: string; moves: Array<[number, number]> }
 
 export type WorkerMessage =
   | { type: 'INIT'; payload: { army: WorkerArmy } }
-  | { type: 'RUN'; payload: { count: number } }
-  | { type: 'STEP' }
+  | { type: 'RUN'; payload: { count: number; boardLimit: number } }
+  | { type: 'STEP'; payload: { boardLimit: number } }
   | { type: 'RESET' };
 
 export type WorkerResponse =
   | { type: 'READY' }
   | { type: 'BATCH'; cells: PlacedCell[]; turnIndex: number }
+  | { type: 'HALTED'; reason: 'BOARD_LIMIT_REACHED'; turnIndex: number }
   | { type: 'RESET_DONE' };
 
 // ─── Display ────────────────────────────────────────────────

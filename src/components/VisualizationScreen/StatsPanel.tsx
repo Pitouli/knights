@@ -8,16 +8,16 @@ export default function StatsPanel() {
   return (
     <div className="flex items-center gap-4 text-xs text-slate-400">
       <span>
-        <span className="text-slate-200 font-semibold">{totalPlaced.toLocaleString()}</span> pièces
+        <span className="text-slate-200 font-semibold">{totalPlaced.toLocaleString()}</span> pieces
       </span>
       <span className="hidden sm:inline">
-        Tour{' '}
+        Turn{' '}
         <span className="text-slate-200 font-semibold">
           {army.length > 0 ? Math.floor(turnIndex / army.length) : 0}
         </span>
       </span>
       <span className="hidden sm:inline">
-        Armée <span className="text-slate-200 font-semibold">{army.length}</span> pièce
+        Army <span className="text-slate-200 font-semibold">{army.length}</span> piece
         {army.length !== 1 ? 's' : ''}
       </span>
     </div>

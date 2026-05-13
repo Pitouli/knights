@@ -20,7 +20,7 @@ export default function PieceLibrary() {
   return (
     <div>
       <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">
-        Catalogue de pièces
+        Piece library
       </h2>
       <ul className="space-y-2">
         {PIECE_CATALOG.map((pt, i) => (

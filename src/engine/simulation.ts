@@ -42,11 +42,18 @@ function handleMessage(e: MessageEvent<WorkerResponse>) {
     useAppStore.setState({ totalPlaced: boardCells.length, turnIndex: msg.turnIndex });
   }
 
+  if (msg.type === 'HALTED') {
+    useAppStore.setState({ isRunning: false, turnIndex: msg.turnIndex });
+    return;
+  }
+
   // Auto-continue if still running (only after a batch, not on READY)
   if (msg.type === 'BATCH') {
-    const { isRunning, speed } = useAppStore.getState();
-    if (isRunning) {
-      send({ type: 'RUN', payload: { count: speed } });
+    const { isRunning, speed, visibleWidth } = useAppStore.getState();
+    if (isRunning && msg.cells.length > 0) {
+      send({ type: 'RUN', payload: { count: speed, boardLimit: visibleWidth } });
+    } else if (isRunning && msg.cells.length === 0) {
+      useAppStore.setState({ isRunning: false });
     }
   }
 }
@@ -54,7 +61,7 @@ function handleMessage(e: MessageEvent<WorkerResponse>) {
 // ─── Public API ─────────────────────────────────────────────
 
 export function initAndStart(): void {
-  const { army, speed } = useAppStore.getState();
+  const { army, speed, visibleWidth } = useAppStore.getState();
   if (army.length === 0) return;
 
   const workerArmy = army.map((p) => {
@@ -68,13 +75,13 @@ export function initAndStart(): void {
   useAppStore.setState({ totalPlaced: 0, turnIndex: 0, isRunning: true });
 
   send({ type: 'INIT', payload: { army: workerArmy } });
-  send({ type: 'RUN', payload: { count: speed } });
+  send({ type: 'RUN', payload: { count: speed, boardLimit: visibleWidth } });
 }
 
 export function startSimulation(): void {
   useAppStore.setState({ isRunning: true });
-  const { speed } = useAppStore.getState();
-  send({ type: 'RUN', payload: { count: speed } });
+  const { speed, visibleWidth } = useAppStore.getState();
+  send({ type: 'RUN', payload: { count: speed, boardLimit: visibleWidth } });
 }
 
 export function pauseSimulation(): void {
@@ -82,11 +89,17 @@ export function pauseSimulation(): void {
 }
 
 export function stepOnce(): void {
-  send({ type: 'STEP' });
+  const { visibleWidth } = useAppStore.getState();
+  send({ type: 'STEP', payload: { boardLimit: visibleWidth } });
 }
 
 export function resetSimulation(): void {
-  useAppStore.setState({ isRunning: false, totalPlaced: 0, turnIndex: 0 });
+  useAppStore.setState((s) => ({
+    isRunning: false,
+    totalPlaced: 0,
+    turnIndex: 0,
+    canvasResetKey: s.canvasResetKey + 1,
+  }));
   boardCells.length = 0;
   pendingCells.length = 0;
   send({ type: 'RESET' });

@@ -1,7 +1,12 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { forwardRef, useEffect, useRef, useCallback, useImperativeHandle } from 'react';
 import { useAppStore } from '../../store';
 import { boardCells, pendingCells } from '../../engine/simulation';
 import type { PlacedCell } from '../../types';
+
+export interface CanvasBoardHandle {
+  resetCanvas: () => void;
+  downloadPng: () => void;
+}
 
 /**
  * CanvasBoard renders cells placed by the simulation engine.
@@ -11,7 +16,7 @@ import type { PlacedCell } from '../../types';
  *  - A visible canvas either shows it 1:1 (+ zoom scale) or scaled to fit.
  *  - A RAF loop flushes `pendingCells` to the offscreen canvas, then blits.
  */
-export default function CanvasBoard() {
+const CanvasBoard = forwardRef<CanvasBoardHandle>(function CanvasBoard(_, ref) {
   const containerRef = useRef<HTMLDivElement>(null);
   const visibleCanvasRef = useRef<HTMLCanvasElement>(null);
   const offscreenRef = useRef<HTMLCanvasElement | null>(null);
@@ -19,6 +24,7 @@ export default function CanvasBoard() {
   const visibleWidth = useAppStore((s) => s.visibleWidth);
   const displayMode = useAppStore((s) => s.displayMode);
   const zoom = useAppStore((s) => s.zoom);
+  const canvasResetKey = useAppStore((s) => s.canvasResetKey);
 
   // The offscreen canvas is 2*visibleWidth+1 square to have plenty of room
   const offSize = visibleWidth * 2 + 1;
@@ -107,6 +113,25 @@ export default function CanvasBoard() {
     }
   }, [displayMode, zoom, offSize, originX, originY]);
 
+  useImperativeHandle(
+    ref,
+    () => ({
+      resetCanvas: () => {
+        initOffscreen();
+        blit();
+      },
+      downloadPng: () => {
+        const canvas = visibleCanvasRef.current;
+        if (!canvas) return;
+        const link = document.createElement('a');
+        link.download = `knights-board-${Date.now()}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      },
+    }),
+    [initOffscreen, blit],
+  );
+
   // Resize visible canvas to its container
   const resizeVisible = useCallback(() => {
     const container = containerRef.current;
@@ -129,11 +154,11 @@ export default function CanvasBoard() {
     return () => window.removeEventListener('resize', handleResize);
   }, [resizeVisible, initOffscreen, blit]);
 
-  // When visibleWidth or displayMode changes, re-init offscreen
+  // Re-init when board geometry changes or when a reset is requested
   useEffect(() => {
     initOffscreen();
     blit();
-  }, [initOffscreen, blit]);
+  }, [initOffscreen, blit, canvasResetKey]);
 
   // RAF loop
   useEffect(() => {
@@ -157,4 +182,6 @@ export default function CanvasBoard() {
       <canvas ref={visibleCanvasRef} className="w-full h-full" />
     </div>
   );
-}
+});
+
+export default CanvasBoard;
