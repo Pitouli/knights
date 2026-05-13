@@ -155,11 +155,12 @@ function handleMessage(e: MessageEvent<WorkerResponse>) {
 // ─── Public API ─────────────────────────────────────────────
 
 export function initAndStart(): void {
-  const { army, speed } = useAppStore.getState();
+  const { army, customTypes, speed } = useAppStore.getState();
   if (army.length === 0) return;
+  const allTypes = [...PIECE_CATALOG, ...customTypes];
 
   const workerArmy = army.map((p) => {
-    const type = PIECE_CATALOG.find((t) => t.id === p.typeId);
+    const type = allTypes.find((t) => t.id === p.typeId);
     if (!type) return { color: p.color, moves: [] };
     return { color: p.color, moves: type.moves };
   });

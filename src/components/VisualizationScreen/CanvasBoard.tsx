@@ -94,12 +94,26 @@ const CanvasBoard = forwardRef<CanvasBoardHandle>(function CanvasBoard(_, ref) {
       const maxPan = visibleWidth;
       const panX = Math.max(-maxPan, Math.min(maxPan, panXRef.current));
       const panY = Math.max(-maxPan, Math.min(maxPan, panYRef.current));
-      const sx = originX + panX - halfW;
-      const sy = originY + panY - halfH;
-      const sw = visible.width / zoom;
-      const sh = visible.height / zoom;
+      const rawSx = originX + panX - halfW;
+      const rawSy = originY + panY - halfH;
+      const rawSw = visible.width / zoom;
+      const rawSh = visible.height / zoom;
+
+      const sx = Math.max(0, rawSx);
+      const sy = Math.max(0, rawSy);
+      const sw = Math.max(0, Math.min(rawSw - (sx - rawSx), offSize - sx));
+      const sh = Math.max(0, Math.min(rawSh - (sy - rawSy), offSize - sy));
+      const dx = Math.max(0, (sx - rawSx) * zoom);
+      const dy = Math.max(0, (sy - rawSy) * zoom);
+      const dw = sw * zoom;
+      const dh = sh * zoom;
+
       ctx.imageSmoothingEnabled = false;
-      ctx.drawImage(off, sx, sy, sw, sh, 0, 0, visible.width, visible.height);
+      ctx.fillStyle = '#080a10';
+      ctx.fillRect(0, 0, visible.width, visible.height);
+      if (sw > 0 && sh > 0) {
+        ctx.drawImage(off, sx, sy, sw, sh, dx, dy, dw, dh);
+      }
     } else {
       // Fit to screen: draw full offSize area scaled to visible
       const size = Math.min(visible.width, visible.height);

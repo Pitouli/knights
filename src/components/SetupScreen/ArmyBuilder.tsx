@@ -28,7 +28,9 @@ function SortablePiece({ piece, index }: { piece: PieceInstance; index: number }
     id: piece.id,
   });
   const { removePiece, updatePiece } = useAppStore();
-  const pt = PIECE_CATALOG.find((t) => t.id === piece.typeId);
+  const customTypes = useAppStore((s) => s.customTypes);
+  const allTypes = [...PIECE_CATALOG, ...customTypes];
+  const pt = allTypes.find((t) => t.id === piece.typeId);
   if (!pt) return null;
 
   const style = {
@@ -68,7 +70,7 @@ function SortablePiece({ piece, index }: { piece: PieceInstance; index: number }
           className="bg-slate-700 text-slate-200 text-sm rounded px-2 py-1 w-full focus:outline-none
             focus:ring-1 focus:ring-indigo-500 border border-slate-600"
         >
-          {PIECE_CATALOG.map((pt) => (
+          {allTypes.map((pt) => (
             <option key={pt.id} value={pt.id}>{pt.name}</option>
           ))}
         </select>

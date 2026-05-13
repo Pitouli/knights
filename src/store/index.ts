@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { PieceInstance, DisplayMode } from '../types';
+import type { PieceInstance, DisplayMode, PieceType } from '../types';
 
 export type AppScreen = 'setup' | 'viz';
 
@@ -10,11 +10,13 @@ interface AppState {
 
   // Army
   army: PieceInstance[];
+  customTypes: PieceType[];
   setArmy: (army: PieceInstance[]) => void;
   addPiece: (p: PieceInstance) => void;
   removePiece: (id: string) => void;
   updatePiece: (id: string, patch: Partial<PieceInstance>) => void;
   reorderPieces: (from: number, to: number) => void;
+  addCustomType: (p: PieceType) => void;
 
   // Simulation controls
   isRunning: boolean;
@@ -46,6 +48,7 @@ export const useAppStore = create<AppState>((set) => ({
   setScreen: (screen) => set({ screen }),
 
   army: [],
+  customTypes: [],
   setArmy: (army) => set({ army }),
   addPiece: (p) => set((s) => ({ army: [...s.army, p] })),
   removePiece: (id) => set((s) => ({ army: s.army.filter((p) => p.id !== id) })),
@@ -58,6 +61,13 @@ export const useAppStore = create<AppState>((set) => ({
       arr.splice(to, 0, item);
       return { army: arr };
     }),
+  addCustomType: (p) =>
+    set((s) => ({
+      customTypes: [
+        ...s.customTypes,
+        { ...p, id: `custom:${p.id}` },
+      ],
+    })),
 
   isRunning: false,
   setIsRunning: (isRunning) => set({ isRunning }),
