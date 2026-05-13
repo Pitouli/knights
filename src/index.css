@@ -42,3 +42,80 @@ canvas {
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
 }
+
+.intro-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(8, 10, 16, 0.85);
+  backdrop-filter: blur(3px);
+}
+
+.intro-modal {
+  width: min(960px, 100%);
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
+  border: 1px solid #1f2937;
+  border-radius: 14px;
+  padding: 20px;
+  background: #0f1117;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
+}
+
+.intro-modal h2 {
+  margin: 0 0 12px;
+  font-size: 1.3rem;
+  color: #f8fafc;
+}
+
+.intro-modal p {
+  margin: 0 0 10px;
+  line-height: 1.55;
+  color: #cbd5e1;
+}
+
+.intro-modal-videos {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.intro-modal-videos iframe {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 1px solid #374151;
+  border-radius: 10px;
+  background: #030712;
+}
+
+.intro-modal-close {
+  margin-top: 16px;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 16px;
+  background: #4f46e5;
+  color: #f8fafc;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.intro-modal-close:hover {
+  background: #6366f1;
+}
+
+.intro-modal-close:focus-visible {
+  outline: 2px solid #818cf8;
+  outline-offset: 2px;
+}
+
+@media (min-width: 900px) {
+  .intro-modal-videos {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
