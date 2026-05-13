@@ -71,7 +71,9 @@ function SortablePiece({ piece, index }: { piece: PieceInstance; index: number }
             focus:ring-1 focus:ring-indigo-500 border border-slate-600"
         >
           {allTypes.map((pt) => (
-            <option key={pt.id} value={pt.id}>{pt.name}</option>
+            <option key={pt.id} value={pt.id}>
+              {pt.name}
+            </option>
           ))}
         </select>
       </div>

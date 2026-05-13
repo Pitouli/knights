@@ -117,15 +117,9 @@ function handleMessage(e: MessageEvent<WorkerResponse>) {
     if (speed === FASTEST_SPEED && fastestDispatchTs > 0) {
       const dt = performance.now() - fastestDispatchTs;
       if (dt < FASTEST_TARGET_MS * 0.8) {
-        fastestBatchSize = Math.min(
-          FASTEST_MAX_BATCH,
-          Math.ceil(fastestBatchSize * 1.25),
-        );
+        fastestBatchSize = Math.min(FASTEST_MAX_BATCH, Math.ceil(fastestBatchSize * 1.25));
       } else if (dt > FASTEST_TARGET_MS * 1.4) {
-        fastestBatchSize = Math.max(
-          FASTEST_MIN_BATCH,
-          Math.floor(fastestBatchSize * 0.75),
-        );
+        fastestBatchSize = Math.max(FASTEST_MIN_BATCH, Math.floor(fastestBatchSize * 0.75));
       }
     }
   }

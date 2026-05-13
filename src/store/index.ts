@@ -63,10 +63,7 @@ export const useAppStore = create<AppState>((set) => ({
     }),
   addCustomType: (p) =>
     set((s) => ({
-      customTypes: [
-        ...s.customTypes,
-        { ...p, id: `custom:${p.id}` },
-      ],
+      customTypes: [...s.customTypes, { ...p, id: `custom:${p.id}` }],
     })),
 
   isRunning: false,

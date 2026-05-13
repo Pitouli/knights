@@ -42,7 +42,9 @@ export default function PieceLibrary() {
   function toggleMove(dx: number, dy: number) {
     if (dx === 0 && dy === 0) return;
     const key = moveKey(dx, dy);
-    setSelectedMoves((prev) => (prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]));
+    setSelectedMoves((prev) =>
+      prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key],
+    );
   }
 
   function createCustomPiece() {
@@ -177,7 +179,9 @@ export default function PieceLibrary() {
                 >
                   -
                 </button>
-                <span className="text-sm text-slate-200 w-12 text-center">{gridSize}x{gridSize}</span>
+                <span className="text-sm text-slate-200 w-12 text-center">
+                  {gridSize}x{gridSize}
+                </span>
                 <button
                   type="button"
                   onClick={() => setGridSize((s) => Math.min(CUSTOM_MAX_SIZE, s + 2))}
