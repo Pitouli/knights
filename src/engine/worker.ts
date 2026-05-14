@@ -45,8 +45,10 @@ function step(boardLimit: number): { x: number; y: number; color: string } | nul
   const armyIdx = turnIndex % army.length;
   const piece = army[armyIdx];
   let i = searchStart[armyIdx] ?? 0;
+  const side = boardLimit * 2 + 1;
+  const maxSpiralIndex = side * side - 1;
 
-  while (i < 10_000_000) {
+  while (i <= maxSpiralIndex) {
     const [x, y] = gen.get(i);
     // Spiral points are monotonic by radius; once outside board bounds,
     // all subsequent points will stay outside the finite board.
@@ -63,8 +65,6 @@ function step(boardLimit: number): { x: number; y: number; color: string } | nul
     i++;
   }
 
-  // Safety escape – should never happen in practice
-  turnIndex++;
   return null;
 }
 

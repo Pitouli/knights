@@ -12,19 +12,18 @@ export default function App() {
       {screen === 'setup' ? <SetupScreen /> : <VisualizationScreen />}
 
       {isIntroOpen && (
-        <div
+        <dialog
           className="intro-modal-overlay"
-          role="dialog"
           aria-modal="true"
           aria-labelledby="intro-modal-title"
         >
           <div className="intro-modal">
             <h2 id="intro-modal-title">Welcome to Knights: Spiral Placement</h2>
             <p>
-              Select your chess pieces. The app will then place them one by one on an
-              infinite board. The engine follows a spiral path from the center, and each piece is
-              dropped on the first square where it can fit without being captured by any piece of
-              another color.
+              Select your chess pieces. The app will then place them one by one on an infinite
+              board. The engine follows a spiral path from the center, and each piece is dropped on
+              the first square where it can fit without being captured by any piece of another
+              color.
             </p>
             <p>
               The concept is explained in the youtube video{' '}
@@ -43,7 +42,7 @@ export default function App() {
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 referrerPolicy="strict-origin-when-cross-origin"
                 allowFullScreen
-              ></iframe>
+              />
               <iframe
                 width="560"
                 height="315"
@@ -53,7 +52,7 @@ export default function App() {
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 referrerPolicy="strict-origin-when-cross-origin"
                 allowFullScreen
-              ></iframe>
+              />
             </div>
 
             <button
@@ -64,7 +63,7 @@ export default function App() {
               Start exploring
             </button>
           </div>
-        </div>
+        </dialog>
       )}
     </>
   );

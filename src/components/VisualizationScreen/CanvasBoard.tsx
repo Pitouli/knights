@@ -5,7 +5,7 @@ import type { PlacedCell } from '../../types';
 
 export interface CanvasBoardHandle {
   resetCanvas: () => void;
-  downloadPng: () => void;
+  downloadPng: (fileName?: string) => void;
 }
 
 /**
@@ -144,11 +144,11 @@ const CanvasBoard = forwardRef<CanvasBoardHandle>(function CanvasBoard(_, ref) {
         initOffscreen();
         blit();
       },
-      downloadPng: () => {
-        const canvas = visibleCanvasRef.current;
+      downloadPng: (fileName) => {
+        const canvas = offscreenRef.current;
         if (!canvas) return;
         const link = document.createElement('a');
-        link.download = `knights-board-${Date.now()}.png`;
+        link.download = fileName || `knights-board-${Date.now()}.png`;
         link.href = canvas.toDataURL('image/png');
         link.click();
       },

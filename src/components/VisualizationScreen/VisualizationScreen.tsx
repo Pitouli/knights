@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useAppStore } from '../../store';
 import {
   initAndStart,
@@ -7,14 +7,49 @@ import {
   stepOnce,
   resetSimulation,
 } from '../../engine/simulation';
+import { PIECE_CATALOG } from '../../engine/catalog';
 import CanvasBoard from './CanvasBoard';
 import type { CanvasBoardHandle } from './CanvasBoard';
 import ControlsPanel from './ControlsPanel';
 import StatsPanel from './StatsPanel';
 
+function slugify(value: string): string {
+  const slug = value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+  return slug || 'piece';
+}
+
 export default function VisualizationScreen() {
   const setScreen = useAppStore((s) => s.setScreen);
+  const army = useAppStore((s) => s.army);
+  const customTypes = useAppStore((s) => s.customTypes);
+  const visibleWidth = useAppStore((s) => s.visibleWidth);
   const canvasRef = useRef<CanvasBoardHandle>(null);
+
+  const downloadFileName = useMemo(() => {
+    if (army.length === 0) return 'knights-board.png';
+
+    const allTypes = [...PIECE_CATALOG, ...customTypes];
+    const colorTokens = new Map<string, string>();
+    let colorIndex = 1;
+
+    const parts = army.map((piece) => {
+      const typeName = allTypes.find((t) => t.id === piece.typeId)?.name ?? piece.typeId;
+      let colorToken = colorTokens.get(piece.color);
+      if (!colorToken) {
+        colorToken = `c${colorIndex}`;
+        colorTokens.set(piece.color, colorToken);
+        colorIndex++;
+      }
+      return `${slugify(typeName)}_${colorToken}`;
+    });
+
+    // Ajoute la taille du board (radius) dans le nom
+    return `${parts.join('_')}_s${visibleWidth}.png`;
+  }, [army, customTypes, visibleWidth]);
 
   useEffect(() => {
     initAndStart();
@@ -63,7 +98,7 @@ export default function VisualizationScreen() {
               resetSimulation();
               canvasRef.current?.resetCanvas();
             }}
-            onDownloadPng={() => canvasRef.current?.downloadPng()}
+            onDownloadPng={() => canvasRef.current?.downloadPng(downloadFileName)}
           />
         </aside>
       </div>

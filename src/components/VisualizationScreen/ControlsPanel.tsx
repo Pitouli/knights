@@ -91,25 +91,25 @@ export default function ControlsPanel({ onStart, onPause, onStep, onReset, onDow
       {/* Board size */}
       <section>
         <label
-          htmlFor="board-range"
+          htmlFor="board-radius"
           className="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-2"
         >
           Board radius: <span className="text-slate-200 font-bold">{visibleWidth}</span>
         </label>
         <input
-          id="board-range"
-          type="range"
+          id="board-radius"
+          type="number"
           min={50}
-          max={1000}
           step={50}
           value={visibleWidth}
-          onChange={(e) => setVisibleWidth(Number(e.target.value))}
-          className="w-full accent-indigo-500"
+          onChange={(e) => {
+            const next = e.currentTarget.valueAsNumber;
+            if (Number.isNaN(next)) return;
+            const normalized = Math.max(50, Math.round(next / 50) * 50);
+            setVisibleWidth(normalized);
+          }}
+          className="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 text-sm text-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500"
         />
-        <div className="flex justify-between text-xs text-slate-600 mt-1">
-          <span>50</span>
-          <span>1000</span>
-        </div>
       </section>
 
       {/* Display mode */}
@@ -161,7 +161,7 @@ export default function ControlsPanel({ onStart, onPause, onStep, onReset, onDow
           onClick={onDownloadPng}
           className="w-full py-2 rounded-lg text-sm bg-slate-700 hover:bg-slate-600 transition-colors"
         >
-          Download canvas (PNG)
+          Download full spiral (PNG)
         </button>
       </section>
     </div>
