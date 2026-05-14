@@ -1,3 +1,4 @@
+import { useRef, useState } from 'react';
 import { useAppStore } from '../../store';
 
 interface Props {
@@ -26,6 +27,21 @@ export default function ControlsPanel({ onStart, onPause, onStep, onReset, onDow
     zoom,
     setZoom,
   } = useAppStore();
+
+  // 1s debouce for visible width changes to avoid spamming the simulation with resets while the user is typing
+  const debounceTimeout = useRef<number | null>(null);
+  const [displayWidth, setDisplayWidth] = useState<number>(visibleWidth);
+  const onChangeVisibleWidth = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (debounceTimeout.current) {
+      clearTimeout(debounceTimeout.current);
+    }
+    const next = e.currentTarget.valueAsNumber;
+    if (Number.isNaN(next)) return;
+    setDisplayWidth(next);
+    debounceTimeout.current = window.setTimeout(() => {
+      setVisibleWidth(next);
+    }, 1000);
+  };
 
   return (
     <div className="flex flex-col gap-5">
@@ -99,15 +115,10 @@ export default function ControlsPanel({ onStart, onPause, onStep, onReset, onDow
         <input
           id="board-radius"
           type="number"
-          min={5}
+          min={0}
           step={50}
-          value={visibleWidth}
-          onChange={(e) => {
-            const next = e.currentTarget.valueAsNumber;
-            if (Number.isNaN(next)) return;
-            const normalized = Math.max(5, Math.round(next / 50) * 50);
-            setVisibleWidth(normalized);
-          }}
+          value={displayWidth}
+          onChange={onChangeVisibleWidth}
           className="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 text-sm text-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500"
         />
       </section>
