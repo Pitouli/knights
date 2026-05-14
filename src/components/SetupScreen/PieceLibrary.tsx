@@ -6,7 +6,7 @@ import { PIECE_COLORS } from '../../constants/palette';
 import MoveGrid from './MoveGrid';
 
 const CUSTOM_MIN_SIZE = 3;
-const CUSTOM_MAX_SIZE = 15;
+const CUSTOM_MAX_SIZE = 150;
 
 function moveKey(dx: number, dy: number): string {
   return `${dx},${dy}`;

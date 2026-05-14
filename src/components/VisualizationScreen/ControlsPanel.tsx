@@ -99,13 +99,13 @@ export default function ControlsPanel({ onStart, onPause, onStep, onReset, onDow
         <input
           id="board-radius"
           type="number"
-          min={50}
+          min={5}
           step={50}
           value={visibleWidth}
           onChange={(e) => {
             const next = e.currentTarget.valueAsNumber;
             if (Number.isNaN(next)) return;
-            const normalized = Math.max(50, Math.round(next / 50) * 50);
+            const normalized = Math.max(5, Math.round(next / 50) * 50);
             setVisibleWidth(normalized);
           }}
           className="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 text-sm text-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500"

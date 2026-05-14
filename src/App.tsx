@@ -12,11 +12,7 @@ export default function App() {
       {screen === 'setup' ? <SetupScreen /> : <VisualizationScreen />}
 
       {isIntroOpen && (
-        <dialog
-          className="intro-modal-overlay"
-          aria-modal="true"
-          aria-labelledby="intro-modal-title"
-        >
+        <div className="intro-modal-overlay" aria-modal="true" aria-labelledby="intro-modal-title">
           <div className="intro-modal">
             <h2 id="intro-modal-title">Welcome to Knights: Spiral Placement</h2>
             <p>
@@ -63,7 +59,7 @@ export default function App() {
               Start exploring
             </button>
           </div>
-        </dialog>
+        </div>
       )}
     </>
   );
